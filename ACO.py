@@ -54,13 +54,14 @@ class AntforTSP(object) :
         Importantly, unlike the lecture's version, this ACO selects only 1/4 of the top tours - and updates only their edges, 
         in a slightly different manner than presented in the lecture.
         """
-    def depositPheronomes(self, all_paths, contradictions) :
-        sorted_paths = sorted(all_paths, key=lambda x: x[1])
-        Nsel = int(self.Nant/4) # Proportion of updated paths
+    def depositPheronomes(self, all_paths, contradictions):
+        #sorted_paths = sorted(all_paths, key=lambda x: x[1])
+        #Nsel = int(self.Nant/4) # Proportion of updated paths
         currPath = 0
-        for path, fitVal in sorted_paths[:Nsel]:
+        #for path, fitVal in sorted_paths[:Nsel]:
+        for path, fitVal in all_paths:
             for move in range(self.dim):
-                self.pheromone[path[move]][move] += 1.0 / contradictions[currPath][move]
+                self.pheromone[path[move]][move] += 1.0 / (contradictions[currPath][move] + 1)**(self.dim/2)
             currPath += 1
 
         """
@@ -74,8 +75,14 @@ class AntforTSP(object) :
             if contradictions[i] != 0:
                 res += 1
         if res == 0:
-            for i in range(len(path)):
-                print(path[i], i)
+            for i in range(self.dim):
+                for j in range(self.dim):
+                    if path[i] == j:
+                        print(1, end='')
+                    else:
+                        print(0, end='')
+                    print(" ", end='')
+                print()
             exit(0)
         return res
 #
@@ -86,7 +93,7 @@ class AntforTSP(object) :
     def constructSolution(self, ant, contradictions):
         path = []
         for i in range(self.dim):
-            path = self.nextMove(self.pheromone[i], path, ant, contradictions)
+            path = self.nextMove(self.pheromone[:][i], path, ant, contradictions)
         return path, self.evalTour(path, contradictions[ant])
         """
         This method generates 'Nant' paths, for the entire colony, representing a single iteration.
@@ -118,6 +125,8 @@ class AntforTSP(object) :
         if colContr[move] != 0:
             contradictions[ant][len(path)-1] += 1
         for j in range(len(path)): #j = column of path[j], path[j] = row of this element
+            if j == len(path) - 1:
+                continue
             if path[j] == move:
                 contradictions[ant][j] += 1
             if path[j] + j == len(path) - 1 + move:
@@ -131,6 +140,6 @@ class AntforTSP(object) :
         curCol = len(path) #current column
         for i in range(self.dim): #row in curCol
             for j in range(len(path)): #j = column of path[j], path[j] = row of this element
-                if path[j] == i | curCol - i == j - path[j] | curCol + i == j + path[j]:
+                if path[j] == i or curCol - i == j - path[j] or curCol + i == j + path[j]:
                     colContr[i] += 1
         return colContr

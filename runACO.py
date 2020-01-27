@@ -8,9 +8,9 @@ import os
 
 
 if __name__ == "__main__" :
-    Niter = 50
-    Nant = 500
-    n_queens = 32
+    Niter = 500
+    Nant = 200
+    n_queens = 128
     ant_colony = ACO(n_queens,Nant, Niter, rho=0.95, alpha=1, beta=10)
     shortest_path = ant_colony.run()
     for i in range(n_queens):

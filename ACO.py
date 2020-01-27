@@ -124,14 +124,12 @@ class AntforTSP(object) :
         path.append(move)
         if colContr[move] != 0:
             contradictions[ant][len(path)-1] += 1
-        for j in range(len(path)): #j = column of path[j], path[j] = row of this element
-            if j == len(path) - 1:
-                continue
+        for j in range((len(path)-1)): #j = column of path[j], path[j] = row of this element
             if path[j] == move:
                 contradictions[ant][j] += 1
             if path[j] + j == len(path) - 1 + move:
                 contradictions[ant][j] += 1
-            if path[j] - j == move - len(path) - 1:
+            if path[j] - j == move - (len(path) - 1):
                 contradictions[ant][j] += 1
         return path
 
